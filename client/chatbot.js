@@ -19,7 +19,7 @@ const createChatLi = (message, className) => {
 }
 
 const generateResponse = (chatElement) => {
-    const API_URL = "https://codex-a153.onrender.com";
+    const API_URL = "https://project-codex.onrender.com";
     const messageElement = chatElement.querySelector("p");
     const newMessage = {"role": "user", "content": `${userMessage}`};
     messages.push(newMessage);

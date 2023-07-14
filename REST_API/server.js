@@ -3,7 +3,6 @@ import * as dotenv from'dotenv'
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import { Configuration, OpenAIApi } from 'openai'
-import fetch from "node-fetch";
 import axios from "axios";
 import SibApiV3Sdk from "sib-api-v3-sdk";
 
