@@ -138,10 +138,19 @@ app.post('/', async (req, res) => {
 
       if(functionCallName === "getWeather") //If function is getWeather
       { 
+        let ip = "";
         //const completionArguments = JSON.parse(completionResponse.function_call.arguments);
         try {
-          const weather = await getWeather(req.ip);
-          console.log(req.ip);
+          axios.get('https://ipgeolocation.abstractapi.com/v1/?api_key=992fa49af19647158f3e6f8526bfe06b')
+          .then(response => {
+              console.log(response.data.ip_address);
+              ip = response.data.ip_address.toString();
+          })
+          .catch(error => {
+              console.log(error);
+          });
+          const weather = await getWeather(ip);
+          console.log(ip);
           msgs.push(completionResponse);
           msgs.push({ role: 'function', name: functionCallName, content: `${weather}` });
         } 
