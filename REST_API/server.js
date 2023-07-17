@@ -140,7 +140,8 @@ app.post('/', async (req, res) => {
       { 
         //const completionArguments = JSON.parse(completionResponse.function_call.arguments);
         try {
-          const weather = await getWeather("current");
+          const weather = await getWeather(req.body.IP_ADR);
+          console.log("IP_ADR: ", req.body.IP_ADR);
           console.log("Weather: ", weather);
           msgs.push(completionResponse);
           msgs.push({ role: 'function', name: functionCallName, content: `${weather}` });
@@ -272,16 +273,6 @@ async function getOrderInfo(orderID, zip)
 }
 
 async function getWeather(ip) {
-  let city;
-  axios.get('https://ipgeolocation.abstractapi.com/v1/?api_key=992fa49af19647158f3e6f8526bfe06b')
-  .then(response => {
-      ip = response.data.ip_address;
-      city = response.data.city;
-      console.log("IP: ", ip)
-  })
-  .catch(error => {
-      console.log(error);
-  });
   try {
     const options = {
       method: 'GET',
@@ -294,7 +285,7 @@ async function getWeather(ip) {
     const response = await axios(options);
     const data = response.data;
 
-    const condition = "location: " + city + ", weather: " + data.current.condition.text.toString();
+    const condition = "location: " + data.location.name.toString() + ", weather: " + data.current.condition.text.toString();
     console.log(condition);
     return condition;
 
