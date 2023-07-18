@@ -8,6 +8,12 @@ let userMessage = "Use current weather and location data say precisely the follo
 let messages = [];
 const inputInitHeight = chatInput.scrollHeight;
 
+let ip_adr;
+$.get("https://ipgeolocation.abstractapi.com/v1/?api_key=992fa49af19647158f3e6f8526bfe06b", function (response) {
+ip_adr = response.ip_address;
+console.log("THIS IS THE IP", ip_adr);
+}, "json");
+
 const createChatLi = (message, className) => {
     // Create a chat <li> element with passed message and className
     const chatLi = document.createElement("li");
@@ -31,7 +37,8 @@ const generateResponse = (chatElement) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            messages
+            messages,
+            "IP_ADR": ip_adr
         })
     }
 
