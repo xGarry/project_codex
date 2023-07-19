@@ -200,7 +200,7 @@ async function getProductInfo(xfactor)
   try {
     let options = {
       "method": "GET",
-      "url": `https://${shopifyKey}:${pass}@dabalmdotcom-8456.myshopify.com/admin/api/2022-04/${endPoint}.json`,
+      "url": `https://${shopifyKey}:${pass}@dabalmdotcom-8456.myshopify.com/admin/api/2023-07/${endPoint}.json`,
       "headers":  {
           "Content-Type": "application/json"
       }
@@ -208,8 +208,9 @@ async function getProductInfo(xfactor)
 
     const response = await axios(options);
     const data = response.data;
-    console.log(data);
-    const obj = result(data, xfactor);
+    //console.log(data);
+    const obj = result(data);
+    //console.log(obj);
     return obj;
   } catch (error) {
     console.error(error);
@@ -218,19 +219,18 @@ async function getProductInfo(xfactor)
 }
 
 //Parse product information and return relevant details
-function result(data, xfactor) 
+function result(data) 
 {
   const finddata = [];
-  
+  const regex = /<([^>]+)>/g;
   for (const item in data['products']) 
   {
-    if(xfactor === "description")
+    if(data['products'][item].status === "active")
     {
-      finddata.push(data['products'][item].body_html);
-    }
-    else if(xfactor === "title")
-    {
-      finddata.push(data['products'][item].title);
+      finddata.push("[TITLE: " + data['products'][item].title + "\n" +
+                    "DESCRIPTION: " + data['products'][item].body_html.replace(regex, "") + "\n" +
+                    "PRODUCT_URL: " + "https://dabalmdotcom.com/products/" + data['products'][item].handle + "]\n"
+                    );
     }
   }
   return finddata.toString();
@@ -243,21 +243,21 @@ async function getOrderInfo(orderID, zip)
   try {
     let options = {
       "method": "GET",
-      "url": `https://${shopifyKey}:${pass}@dabalmdotcom-8456.myshopify.com/admin/api/2022-04/${endPoint}.json?name=%23${orderID}&status=any`,
+      "url": `https://${shopifyKey}:${pass}@dabalmdotcom-8456.myshopify.com/admin/api/2023-07/${endPoint}.json?name=%23${orderID}&status=any`,
       "headers":  {
           "Content-Type": "application/json"
       }
   };
     const response = await axios(options);
     const data = response.data;
-    console.log("data: ", data["orders"][0]);
+    //console.log("data: ", data["orders"][0]);
     const obj = data["orders"][0].order_status_url.toString();
     let ActualZip = data["orders"][0].shipping_address.zip.toString();
 
     ActualZip = ActualZip.toLowerCase().replace(/\s/g, "");
     zip = zip.toLowerCase();
-    console.log("zip: ", zip);
-    console.log("ActualZip: ", ActualZip);
+    //console.log("zip: ", zip);
+    //console.log("ActualZip: ", ActualZip);
 
     if(ActualZip === zip){
       return obj;
