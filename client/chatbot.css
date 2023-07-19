@@ -10,16 +10,18 @@
 
 .app {
   background: #E3F2FD;
+  position: fixed;
+  z-index: 2147483647;
 }
 
 .chatbot-toggler {
   position: fixed;
-  bottom: 30px;
-  right: 35px;
+  bottom: 16px;
+  right: 16px;
   outline: none;
   border: none;
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   display: flex;
   cursor: pointer;
   align-items: center;
@@ -28,7 +30,7 @@
   background: #724ae8;
   transition: all 0.2s ease;
 }
-body.show-chatbot .chatbot-toggler {
+.show-chatbot .chatbot-toggler {
   transform: rotate(90deg);
 }
 .chatbot-toggler span {
@@ -36,17 +38,17 @@ body.show-chatbot .chatbot-toggler {
   position: absolute;
 }
 .chatbot-toggler span:last-child,
-body.show-chatbot .chatbot-toggler span:first-child  {
+.show-chatbot .chatbot-toggler span:first-child  {
   opacity: 0;
 }
-body.show-chatbot .chatbot-toggler span:last-child {
+.show-chatbot .chatbot-toggler span:last-child {
   opacity: 1;
 }
 .chatbot {
   position: fixed;
-  right: 35px;
+  right: 16px;
   bottom: 90px;
-  width: 420px;
+  width: 360px;
   background: #fff;
   border-radius: 15px;
   overflow: hidden;
@@ -58,7 +60,7 @@ body.show-chatbot .chatbot-toggler span:last-child {
               0 32px 64px -48px rgba(0,0,0,0.5);
   transition: all 0.1s ease;
 }
-body.show-chatbot .chatbot {
+.show-chatbot .chatbot {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1);
@@ -192,7 +194,7 @@ header h2 {
 }
 .chatbox .chat p {
   white-space: pre-wrap;
-  padding: 12px 16px;
+  padding: 12px 12px;
   border-radius: 10px 10px 0 10px;
   max-width: 75%;
   color: #fff;
@@ -220,16 +222,17 @@ header h2 {
   padding: 3px 20px;
   border-top: 1px solid #ddd;
 }
-.chat-input textarea {
+.chat-input textarea, textarea:focus{
   height: 55px;
   width: 100%;
   border: none;
-  outline: none;
   resize: none;
-  max-height: 180px;
-  padding: 15px 15px 15px 0;
-  font-size: 0.95rem;
+  outline: none;
+  max-height: 55px;
+  padding: 15px 15px 15px 15px;
+  font-size: 16px;
 }
+
 .chat-input span {
   align-self: flex-end;
   color: #724ae8;
@@ -246,8 +249,10 @@ header h2 {
 
 @media (max-width: 490px) {
   .chatbot-toggler {
-    right: 20px;
-    bottom: 20px;
+    right: 16px;
+    bottom: 16px;
+    height: 47px;
+    width: 47px;
   }
   .chatbot {
     right: 0;
@@ -255,6 +260,8 @@ header h2 {
     height: 100%;
     border-radius: 0;
     width: 100%;
+    position: fixed;
+    zoom: 100%;
   }
   .chatbot .chatbox {
     height: 90%;
@@ -262,6 +269,7 @@ header h2 {
   }
   .chatbot .chat-input {
     padding: 5px 15px;
+    padding-left: 80px;
   }
   .chatbot header span {
     display: block;

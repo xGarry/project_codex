@@ -140,8 +140,8 @@ app.post('/', async (req, res) => {
       { 
         //const completionArguments = JSON.parse(completionResponse.function_call.arguments);
         try {
-          const weather = await getWeather(req.body.IP_ADR);
-          console.log("IP_ADR: ", req.body.IP_ADR);
+          const weather = await getWeather(req.body.POSTAL);
+          console.log("POSTAL: ", req.body.POSTAL);
           console.log("Weather: ", weather);
           msgs.push(completionResponse);
           msgs.push({ role: 'function', name: functionCallName, content: `${weather}` });
