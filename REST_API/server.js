@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import { Configuration, OpenAIApi } from 'openai'
 import axios from "axios";
 import SibApiV3Sdk from "sib-api-v3-sdk";
+import fs from "fs";
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ app.use(cors())
 app.post('/', async (req, res) => {
   try {
     const { messages } = req.body; //Get user query
-    console.log(req.body);
+    saveChatLogs(req.body);
     //initialize bot variables
     const msgs = [{role: "system", content: "You are a helpful chatbot assistant for an e-commerce website that sells fragrance balms. If you are unable to answer a prompt, ask the customer to contact dabalmdotcom@gmail.com"},...messages];
     const functions = [
@@ -315,4 +316,35 @@ function addSubscriber(fname, lname, email){
     return error;
   });
 }
-  
+
+function getFormattedDate() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function saveChatLogs(chatLogs) {
+  const fileName = 'chatLogs.txt';
+  let logs = '';
+
+  for (let i = 1; i < chatLogs.length; i++) {
+    const { role, content } = chatLogs[i];
+    const formattedDate = getFormattedDate();
+
+    logs += `[${formattedDate}] ${role}: ${content}\n`;
+  }
+
+  fs.appendFile(fileName, logs, (err) => {
+    if (err) {
+      console.error('Error saving chat logs:', err);
+    } else {
+      console.log('Chat logs saved successfully!');
+    }
+  });
+}
