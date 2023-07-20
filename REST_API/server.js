@@ -23,6 +23,7 @@ app.use(cors())
 app.post('/', async (req, res) => {
   try {
     const { messages } = req.body; //Get user query
+    console.log(req.body);
     //initialize bot variables
     const msgs = [{role: "system", content: "You are a helpful chatbot assistant for an e-commerce website that sells fragrance balms. If you are unable to answer a prompt, ask the customer to contact dabalmdotcom@gmail.com"},...messages];
     const functions = [

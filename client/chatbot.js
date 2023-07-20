@@ -49,17 +49,23 @@ const generateResponse = (chatElement) => {
         
         var currentText = messageElement.innerHTML;
         // Regular expression to match a URL
-        var urlRegex = /\((https?:\/\/[^\s]+)\)/;
-        
+        var urlRegex = /\((https?:\/\/[^\s/$.?#].[^\s]*)\)/g;
+        const emailRegex = /dabalmdotcom@gmail\.com\b/gi;
+
         // Check if the current text contains a URL
         if (urlRegex.test(currentText)) {
-            var match = currentText.match(urlRegex);
-            var url = match ? match[1] : null;
-            // Replace the URL with a blank
-            var newText = currentText.replace(urlRegex, '');
+            var newText = currentText.replace(urlRegex, function(match, url) {
+                return `<a href="${url}" target="_blank">here</a>`;
+              });            
             var trackOrderRegex = /\[(.*?)\]/g;
-            newText = newText.replace(trackOrderRegex, '<a href="' + url + '" target="_blank">[Track Order]</a>');
+            newText = newText.replace(trackOrderRegex, '');
             // Update the content of the <p> element
+            messageElement.innerHTML = newText;
+            currentText = messageElement.innerHTML;
+        }
+        if(emailRegex.test(currentText)){
+            var newText = currentText.replace(emailRegex, '<a href="mailto:dabalmdotcom@gmail.com" style="text-decoration: underline;">$&</a>');
+            console.log(newText);
             messageElement.innerHTML = newText;
         }
 
