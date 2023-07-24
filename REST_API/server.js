@@ -244,24 +244,31 @@ async function getOrderInfo(orderID, zip)
   try {
     let options = {
       "method": "GET",
-      "url": `https://${shopifyKey}:${pass}@dabalmdotcom-8456.myshopify.com/admin/api/2023-07/${endPoint}.json?name=%23${orderID}&status=any`,
+      "url": `https://${shopifyKey}:${pass}@dabalmdotcom-8456.myshopify.com/admin/api/2022-04/${endPoint}.json?name=%23${orderID}&status=any`,
       "headers":  {
           "Content-Type": "application/json"
       }
   };
     const response = await axios(options);
     const data = response.data;
+    let stats = "awaiting shipment";
     //console.log("data: ", data["orders"][0]);
-    const obj = data["orders"][0].order_status_url.toString();
+    if(data["orders"][0].fulfillment_status != null){
+      stats = data["orders"][0].fulfillments[data["orders"][0].fulfillments.length - 1].shipment_status;
+      //console.log("stats ", stats);
+    }
+    const tracking = data["orders"][0].order_status_url.toString();
+    const orderInfo = "Tracking URL: " + tracking + "\n" + "Current Status: " + stats + "\n";
     let ActualZip = data["orders"][0].shipping_address.zip.toString();
-
+    
     ActualZip = ActualZip.toLowerCase().replace(/\s/g, "");
     zip = zip.toLowerCase();
     //console.log("zip: ", zip);
     //console.log("ActualZip: ", ActualZip);
 
     if(ActualZip === zip){
-      return obj;
+      //console.log(orderInfo);
+      return orderInfo;
     }else{
       console.log("Incorrect zip/postal code");
       return "Incorrect zip/postal code";
