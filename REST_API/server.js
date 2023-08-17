@@ -6,6 +6,7 @@ import { Configuration, OpenAIApi } from 'openai'
 import axios from "axios";
 import SibApiV3Sdk from "sib-api-v3-sdk";
 import fs from "fs";
+import { format } from 'date-fns';
 
 dotenv.config();
 
@@ -328,9 +329,6 @@ function addSubscriber(fname, lname, email){
 }
 
 function saveChatLogs(chatLogs) {
-  const fs = require('fs');
-  const { format } = require('date-fns'); // You can use a date library like date-fns for formatting dates
-
   const textToAppend = chatLogs.toString() + '\n';
   const currentDate = new Date();
 
