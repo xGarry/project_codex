@@ -336,31 +336,32 @@ function saveChatLogs(chatLogs) {
   const formattedDate = format(currentDate, 'yyyy-MM-dd HH:mm:ss');
 
   const logText = `${formattedDate}: ${textToAppend}`;
+  const filePath = path.join('/var/data', 'logs.txt');
 
-  fs.readFile('logs.txt', 'utf8', (err, data) => {
-      if (err) {
-          if (err.code === 'ENOENT') {
-              // File doesn't exist, create it and append text
-              fs.writeFile('logs.txt', logText, 'utf8', (err) => {
-                  if (err) {
-                      console.error('Error creating and writing to file:', err);
-                  } else {
-                      console.log('File created and text appended.');
-                  }
-              });
-          } else {
-              console.error('Error reading file:', err);
-          }
-      } else {
-          // File exists, append text to it
-          fs.appendFile('logs.txt', logText, 'utf8', (err) => {
-              if (err) {
-                  console.error('Error appending text to file:', err);
-              } else {
-                  console.log('Text appended to file.');
-              }
-          });
-      }
-  });
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+        if (err.code === 'ENOENT') {
+            // File doesn't exist, create it and append text
+            fs.writeFile(filePath, logText, 'utf8', (err) => {
+                if (err) {
+                    console.error('Error creating and writing to file:', err);
+                } else {
+                    console.log('File created and text appended.');
+                }
+            });
+        } else {
+            console.error('Error reading file:', err);
+        }
+    } else {
+        // File exists, append text to it
+        fs.appendFile(filePath, logText, 'utf8', (err) => {
+            if (err) {
+                console.error('Error appending text to file:', err);
+            } else {
+                console.log('Text appended to file.');
+            }
+        });
+    }
+});
 
 }
