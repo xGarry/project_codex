@@ -24,6 +24,8 @@ app.use(cors())
 app.post('/', async (req, res) => {
   try {
     const { messages } = req.body; //Get user query
+    console.log(messages[messages.length - 1]);
+    saveChatLogs(messages[messages.length - 1]);
     //initialize bot variables
     const msgs = [{role: "system", content: "You are a helpful chatbot assistant for an e-commerce website that sells fragrance balms. If you are unable to answer a prompt, ask the customer to contact dabalmdotcom@gmail.com"},...messages];
     const functions = [
@@ -167,6 +169,7 @@ app.post('/', async (req, res) => {
         messages: msgs,
       });
       //Get final response from chatGPT and send it to user
+      saveChatLogs(second_response.data.choices[0].message);
       res.json({
         completion: second_response.data.choices[0].message
       });
@@ -175,6 +178,7 @@ app.post('/', async (req, res) => {
     //Else function call is not required
     else
     {
+      saveChatLogs(completionResponse);
       res.json({
         completion: completionResponse //send user the initial response from chatGPT
       });
@@ -323,34 +327,42 @@ function addSubscriber(fname, lname, email){
   });
 }
 
-function getFormattedDate() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
 function saveChatLogs(chatLogs) {
-  const fileName = 'chatLogs.txt';
-  let logs = '';
+  const fs = require('fs');
+  const { format } = require('date-fns'); // You can use a date library like date-fns for formatting dates
 
-  for (let i = 1; i < chatLogs.length; i++) {
-    const { role, content } = chatLogs[i];
-    const formattedDate = getFormattedDate();
+  const textToAppend = chatLogs.toString() + '\n';
+  const currentDate = new Date();
 
-    logs += `[${formattedDate}] ${role}: ${content}\n`;
-  }
+  // Format the current date and time using date-fns
+  const formattedDate = format(currentDate, 'yyyy-MM-dd HH:mm:ss');
 
-  fs.appendFile(fileName, logs, (err) => {
-    if (err) {
-      console.error('Error saving chat logs:', err);
-    } else {
-      console.log('Chat logs saved successfully!');
-    }
+  const logText = `${formattedDate}: ${textToAppend}`;
+
+  fs.readFile('logs.txt', 'utf8', (err, data) => {
+      if (err) {
+          if (err.code === 'ENOENT') {
+              // File doesn't exist, create it and append text
+              fs.writeFile('logs.txt', logText, 'utf8', (err) => {
+                  if (err) {
+                      console.error('Error creating and writing to file:', err);
+                  } else {
+                      console.log('File created and text appended.');
+                  }
+              });
+          } else {
+              console.error('Error reading file:', err);
+          }
+      } else {
+          // File exists, append text to it
+          fs.appendFile('logs.txt', logText, 'utf8', (err) => {
+              if (err) {
+                  console.error('Error appending text to file:', err);
+              } else {
+                  console.log('Text appended to file.');
+              }
+          });
+      }
   });
+
 }
