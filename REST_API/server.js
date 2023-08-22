@@ -25,8 +25,6 @@ app.use(cors())
 app.post('/', async (req, res) => {
   try {
     const { messages } = req.body; //Get user query
-    console.log(messages[messages.length - 1]);
-    saveChatLogs(messages[messages.length - 1]);
     //initialize bot variables
     const msgs = [{role: "system", content: "You are a helpful chatbot assistant for an e-commerce website that sells fragrance balms. If you are unable to answer a prompt, ask the customer to contact dabalmdotcom@gmail.com"},...messages];
     const functions = [
@@ -170,7 +168,6 @@ app.post('/', async (req, res) => {
         messages: msgs,
       });
       //Get final response from chatGPT and send it to user
-      saveChatLogs(second_response.data.choices[0].message);
       res.json({
         completion: second_response.data.choices[0].message
       });
@@ -179,7 +176,6 @@ app.post('/', async (req, res) => {
     //Else function call is not required
     else
     {
-      saveChatLogs(completionResponse);
       res.json({
         completion: completionResponse //send user the initial response from chatGPT
       });
@@ -327,70 +323,3 @@ function addSubscriber(fname, lname, email){
     return error;
   });
 }
-
-function saveChatLogs(chatLogs) {
-  const textToAppend = chatLogs.toString() + '\n';
-  const currentDate = new Date();
-
-  // Format the current date and time using date-fns
-  const formattedDate = format(currentDate, 'yyyy-MM-dd HH:mm:ss');
-
-  const logText = `${formattedDate}: ${textToAppend}`;
-
-  fs.readFile('logs.txt', 'utf8', (err, data) => {
-      if (err) {
-          if (err.code === 'ENOENT') {
-              // File doesn't exist, create it and append text
-              fs.writeFile('logs.txt', logText, 'utf8', (err) => {
-                  if (err) {
-                      console.error('Error creating and writing to file:', err);
-                  } else {
-                      console.log('File created and text appended.');
-                  }
-              });
-          } else {
-              console.error('Error reading file:', err);
-          }
-      } else {
-          // File exists, append text to it
-          fs.appendFile('logs.txt', logText, 'utf8', (err) => {
-              if (err) {
-                  console.error('Error appending text to file:', err);
-              } else {
-                  console.log('Text appended to file.');
-              }
-          });
-      }
-  });
-
-}
-
-
-async function appendContentToDoc() {
-  const docsUrl = `https://docs.googleapis.com/v1/documents/1PNfFFTt8PvjKBH4S_QvpEszekPFiyqgHXb7SzoNFEoI:batchUpdate?key=${process.env.DOCS_API_KEY}`;
-
-  const headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-  };
-
-  const requestBody = {
-      requests: [
-          {
-              insertText: {
-                  location: {
-                      index: 1 // This means we're inserting at the very beginning of the document
-                  },
-                  text: "Hello, world!\n" // Text you want to append
-              }
-          }
-      ]
-  };
-
-  await axios.post(docsUrl, requestBody, {headers});
-  console.log(`Appended content to doc with ID: 1PNfFFTt8PvjKBH4S_QvpEszekPFiyqgHXb7SzoNFEoI`);
-}
-
-(async () => {
-  await appendContentToDoc();
-})();
