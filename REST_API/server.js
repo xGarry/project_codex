@@ -7,6 +7,7 @@ import axios from "axios";
 import SibApiV3Sdk from "sib-api-v3-sdk";
 import fs from "fs";
 import { format } from 'date-fns';
+import { google } from 'googleapis';
 
 dotenv.config();
 
@@ -364,3 +365,33 @@ function saveChatLogs(chatLogs) {
   });
 
 }
+
+
+async function appendContentToDoc() {
+  const docsUrl = `https://docs.googleapis.com/v1/documents/1PNfFFTt8PvjKBH4S_QvpEszekPFiyqgHXb7SzoNFEoI:batchUpdate?key=${process.env.DOCS_API_KEY}`;
+
+  const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+  };
+
+  const requestBody = {
+      requests: [
+          {
+              insertText: {
+                  location: {
+                      index: 1 // This means we're inserting at the very beginning of the document
+                  },
+                  text: "Hello, world!\n" // Text you want to append
+              }
+          }
+      ]
+  };
+
+  await axios.post(docsUrl, requestBody, {headers});
+  console.log(`Appended content to doc with ID: 1PNfFFTt8PvjKBH4S_QvpEszekPFiyqgHXb7SzoNFEoI`);
+}
+
+(async () => {
+  await appendContentToDoc();
+})();
