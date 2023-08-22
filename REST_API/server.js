@@ -7,6 +7,7 @@ import axios from "axios";
 import SibApiV3Sdk from "sib-api-v3-sdk";
 import fs from "fs";
 import { format } from 'date-fns';
+import { google } from 'googleapis';
 
 dotenv.config();
 
@@ -322,4 +323,56 @@ function addSubscriber(fname, lname, email){
     console.error(error);
     return error;
   });
+}
+
+const credentials = {
+    installed: {
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        redirect_uris: ['https://project-codex.onrender.com']
+    }
+};
+
+const token = {
+    access_token: 'YOUR_ACCESS_TOKEN',
+    refresh_token: 'YOUR_REFRESH_TOKEN',
+    scope: 'https://www.googleapis.com/auth/documents',
+    token_type: 'Bearer',
+    expiry_date: YOUR_EXPIRY_DATE
+};
+
+authorize(credentials, appendToDoc);
+
+function authorize(credentials, callback) {
+    const {client_secret, client_id, redirect_uris} = credentials.installed;
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+
+    oAuth2Client.setCredentials(token);
+    callback(oAuth2Client);
+}
+
+function appendToDoc(auth) {
+    const docs = google.docs({version: 'v1', auth});
+    const documentId = '1PNfFFTt8PvjKBH4S_QvpEszekPFiyqgHXb7SzoNFEoI';  // Replace with your Google Docs document ID
+
+    const requests = [
+        {
+            insertText: {
+                location: {
+                    index: 1,
+                },
+                text: "\nThis is the appended text."
+            }
+        }
+    ];
+
+    docs.documents.batchUpdate({
+        documentId: documentId,
+        requestBody: {
+            requests: requests
+        }
+    }, (err, res) => {
+        if (err) return console.log('The API returned an error:', err);
+        console.log('Text appended successfully!');
+    });
 }
