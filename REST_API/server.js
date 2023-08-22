@@ -7,7 +7,6 @@ import axios from "axios";
 import SibApiV3Sdk from "sib-api-v3-sdk";
 import fs from "fs";
 import { format } from 'date-fns';
-import { google } from 'googleapis';
 
 dotenv.config();
 
