@@ -324,7 +324,7 @@ function addSubscriber(fname, lname, email){
     return error;
   });
 }
-
+/*
 const credentials = {
     installed: {
         client_id: process.env.CLIENT_ID,
@@ -375,3 +375,4 @@ function appendToDoc(auth) {
         console.log('Text appended successfully!');
     });
 }
+*/
