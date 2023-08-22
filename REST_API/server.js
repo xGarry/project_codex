@@ -338,7 +338,6 @@ const token = {
     refresh_token: 'YOUR_REFRESH_TOKEN',
     scope: 'https://www.googleapis.com/auth/documents',
     token_type: 'Bearer',
-    expiry_date: YOUR_EXPIRY_DATE
 };
 
 authorize(credentials, appendToDoc);
